@@ -8,11 +8,12 @@ class ColorPicker{
       this.colorHSV = [0,0,0];
       this.colorRGB = [0,0,0];
       this.mouseDown = false;
+      this.aktiveElementObj = null;
       this.aktiveElement = 0;
 
       this.buildHTML(id);
       this.addEvents();
-      this.render();
+      this.startRender();
 
     }
     buildHTML(id){
@@ -77,37 +78,67 @@ class ColorPicker{
     }
     addEvents(){
       document.addEventListener('mousedown', (e) => {this.mouseDown=true;console.log(this.mouseDown);});
-      document.addEventListener('mouseup', (e) => {this.mouseDown=false;console.log(this.mouseDown);this.aktiveElement=0;});
+      document.addEventListener('mouseup', (e) => {this.mouseDown=false;console.log(this.mouseDown);this.aktiveElementObj=null;this.aktiveElement=0;});
+
+      let obj;
+      obj = document.getElementById("colorFrame"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=1;});
+
+      obj = document.getElementById("colorPick"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=2;});
+      obj = document.getElementById("colorLeverY"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=3;});
+
+      obj = document.getElementById("colorLeverX1"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=4;});
+      obj = document.getElementById("colorLeverX2"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=5;});
+      obj = document.getElementById("colorLeverX3"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=6;});
+      obj = document.getElementById("colorLeverX4"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=7;});
+      obj = document.getElementById("colorLeverX5"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=8;});
+      obj = document.getElementById("colorLeverX6"+this.id);
+      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=9;});
 
 
-
-      document.addEventListener('mousemove', (e) => {if (this.mouseDown===true){      this.startRender() }});
-
-      document.getElementById("colorFrame"+this.id).addEventListener('mousemove', (e) => {
-        if (this.mouseDown===true){        
-          this.posX += e.movementX
-          this.posY += e.movementY
-          let div = document.getElementById("colorDiv"+this.id);
-          div.style.left = this.posX+"px";
-          div.style.top = this.posY+"px";
-        }
-      });
-      document.getElementById("colorPick"+this.id).addEventListener('mousemove', (e) => {
+      document.addEventListener('mousemove', (e) => {
         if (this.mouseDown===true){
-          this.aktiveElement=1;
-          let click = this.click(e.layerX-5,e.layerY-5,160,160);
-          this.colorHSV[2] = click[0];this.colorHSV[1] = 1-click[1];
-         // this.colorRGB = this.createRGBfromHSV(this.colorHSV);
+          let click = null;
+          switch(this.aktiveElement)
+          {
+            case 1:
+            this.posX += e.movementX
+            this.posY += e.movementY
+            let div = document.getElementById("colorDiv"+this.id);
+            div.style.left = this.posX+"px";
+            div.style.top = this.posY+"px";
+            break;
+            case 2:
+              click = this.click(e.layerX-5,e.layerY-5,160,160);
+              this.colorHSV[2] = click[0];this.colorHSV[1] = 1-click[1];
+            break;
+            case 3:
+              click = this.click(e.layerX,e.layerY,1,170);
+              this.colorHSV[0] = 1-click[1];
+            break;
+            case 4:
+              click = this.click(e.layerX,e.layerY,140,1);
+              this.colorHSV[0] = click[0];
+            break;
+            case 5:
+              click = this.click(e.layerX,e.layerY,140,1);
+              this.colorHSV[1] = click[0];
+            break;
+            case 6:
+              click = this.click(e.layerX,e.layerY,140,1);
+              this.colorHSV[2] = click[0];
+            break;
+          }
         }
       });
-      document.getElementById("colorLeverY"+this.id).addEventListener('mousemove', (e) => {
-        if (this.mouseDown===true){
-          this.aktiveElement=1;
-          let click = this.click(e.layerX,e.layerY+0.01,1,170);
-          this.colorHSV[0] = 1-click[1];
-          //this.colorRGB = this.createRGBfromHSV(this.colorHSV);
-        }
-      });
+
     }
     setLevler(lever1,lever2,lever3,lever4,lever5,lever6){
     }
@@ -168,7 +199,15 @@ class ColorPicker{
       return colorRGB;
     }
     createHSVfromRGB(colorRGB){
-      let colorHSV=[0,0,0];
+      let r = colorRGB[0]/255,g = colorRGB[1]/255,b = colorRGB[2]/255
+      let min,max
+      min = r;if(min > g)min=g;if(min > b)min=b;
+      max = r;if(max < g)max=g;if(max < b)max=b;
+      let a = max - min;
+      let H = (60*(g-b)/a)+(60*(b-r)/a)+(60*(r-g)/a)+6;
+      let S = 0;
+      let V = 0;
+      let colorHSV=[H,S,V];
       return colorHSV;
     }
     createRGBfromRGB(colorRGB){
@@ -334,11 +373,8 @@ class ColorPicker{
       return (canvas);
     };
     startRender(){
-      console.log(this.aktiveElement);
-      if (this.mouseDown===true && this.aktiveElement===1){
         this.render();
         setTimeout(this.startRender.bind(this), 40);
-      }
     }
     clearCanvas(canvasName,SmoothingEnabled,fillStyle){
       let canvas = document.getElementById(""+canvasName+""+this.id);
@@ -353,10 +389,11 @@ class ColorPicker{
       let fillStyle = "rgba(75,75,75,1)"; 
 
       this.colorRGB = this.createRGBfromHSV(this.colorHSV);
+     // console.log(this.createHSVfromRGB(this.colorRGB));
 
       context = this.clearCanvas("colorPick",SmoothingEnabled,fillStyle)
-      context.fillRect(0, this.colorHSV[1]*160, 170, 10);
-      context.fillRect(this.colorHSV[2]*160, 0, 10, 170);
+      context.fillRect(0, (1-this.colorHSV[1])*160, 170, 10);
+      context.fillRect((this.colorHSV[2])*160, 0, 10, 170);
       context.drawImage(this.drawColorPick(resolution), 5, 5, 160, 160);
 
       context = this.clearCanvas("colorLeverY",SmoothingEnabled,fillStyle)
