@@ -35,8 +35,6 @@ class ColorPicker{
     buildHTML(id){
       colorPick.width = 180;
       colorPick.height = 180;
-      colorPreview.width = 30;
-      colorPreview.height = 30;
       colorLeverY.width=10;
       colorLeverY.height=180;
 
@@ -303,8 +301,5 @@ class ColorPicker{
       context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
       context.drawImage(this.drawColorLeverX6(), 0, 0, 180, 10);
 
-      context  =  colorPreview.getContext("2d");
-      context.fillStyle = "rgba("+this.colorRGB[0]+","+this.colorRGB[1]+","+this.colorRGB[2]+",1)"; 
-      context.fillRect(0, 0,30, 30);
     }
 }
