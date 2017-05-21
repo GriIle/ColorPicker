@@ -1,11 +1,57 @@
-.color-div {
+.example-div {
   position: absolute;
   z-index: 12;
-  left: 228px;
+  left: 200px;
   top: 100px;
   background: rgba(31, 31, 31, 0.95);
-  height: 256px;
-  width: 256px;
+  cursor: default;
+  display: inline;
+  text-align: center;
+  border-right: 1px solid rgba(42,42,42,1.0);
+  border-left: 1px solid rgba(42,42,42,1.0);
+  border-top: 1px solid rgba(42,42,42,1.0);
+  border-bottom: 1px solid rgba(42,42,42,1.0);
+}
+
+.color-input {
+  position: absolute;
+  background: rgba(20, 20, 20, 0.95);
+  /*font-family: "Times New Roman", Times, serif;*/
+  /*font-size: 40px;*/
+  color: rgb(230,230,230);
+  cursor: default;
+  display: inline;
+  text-align: center;
+  border-right: 1px solid rgba(42,42,42,1.0);
+  border-left: 1px solid rgba(42,42,42,1.0);
+  border-top: 1px solid rgba(42,42,42,1.0);
+  border-bottom: 1px solid rgba(42,42,42,1.0);
+}
+.color-frame {
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  position: absolute;
+  background: rgba(18, 18, 18, 0.95);
+  color: rgb(230,230,230);
+  font-family: "Arial", Times, serif;
+  font-size: 13px;
+  cursor: default;
+  display: inline;
+  text-align: left;
+  border-right: 1px solid rgba(42,42,42,1.0);
+  border-left: 1px solid rgba(42,42,42,1.0);
+  border-top: 1px solid rgba(42,42,42,1.0);
+  border-bottom: 1px solid rgba(42,42,42,1.0);
+}
+.color-div {
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  position: absolute;
+  background: rgba(31, 31, 31, 0.95);
   cursor: default;
   display: inline;
   text-align: center;
@@ -16,8 +62,12 @@
 }
 
 .color-pick {
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
   position: absolute;
-  background: rgba(128, 128, 128, 0.95);
+  background: rgba(20, 20, 20, 0.95);
   cursor: default;
   display: inline;
   text-align: center;
@@ -28,8 +78,12 @@
 }
 
 .color-lever {
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
   position: absolute;
-  background: rgba(128, 128, 128, 0.95);
+  background: rgba(20, 20, 20, 0.95);
   cursor: default;
   display: inline;
   text-align: center;
@@ -40,13 +94,16 @@
 }
 
 .color-txt {
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
   position: absolute;
-  background: rgba(128, 128, 128, 0.95);
+  background: rgba(0, 0, 0, 0);
+  color: rgb(230,230,230);
+  font-family: "Arial", Times, serif;
+  font-size: 13px;
   cursor: default;
   display: inline;
   text-align: center;
-  border-right: 1px solid rgba(42,42,42,1.0);
-  border-left: 1px solid rgba(42,42,42,1.0);
-  border-top: 1px solid rgba(42,42,42,1.0);
-  border-bottom: 1px solid rgba(42,42,42,1.0);
 }

@@ -1,7 +1,8 @@
 function main(){
 	console.log("Start");
-	let Test = new ColorPicker(true,true);
-	//window.colorDiv.addEventListener("mousedown", (e) => {console.log("click")});
-	console.log(Test);
+	let Test = new ColorPicker("1");
+	Test.show(200,0);
+		let Test2 = new ColorPicker("2");
+	Test2.show(600,200);
 }
 main();

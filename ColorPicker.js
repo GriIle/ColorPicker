@@ -2,64 +2,131 @@
 class ColorPicker{
   //--buildColorPicker---------------------------------------------------------------------------------------------------------------------------------
     constructor(id) {
+      this.id = id;
+      this.posX=0;
+      this.posY=0;
       this.colorHSV = [0,0,0];
       this.colorRGB = [0,0,0];
       this.mouseDown = false;
       this.aktiveElement = 0;
 
-      this.buildHTML(5754);
+      this.buildHTML(id);
       this.addEvents();
       this.render();
 
     }
-    addEvents(){
-      colorDiv.addEventListener('mousedown', (e) => {this.mouseDown=true;console.log(this.mouseDown);});
-      colorDiv.addEventListener('mouseup', (e) => {this.mouseDown=false;console.log(this.mouseDown);});
-      colorDiv.addEventListener('mousemove', (e) => {if (this.mouseDown===true)this.render();});
+    buildHTML(id){
+      let div;
+      div = document.createElement('div');
+      div.className ="color-div";
+      div.style.display = "none";
+      div.UNSELECTABLE = "on";
+      div.id = ("colorDiv"+id);
+      div.style.left = "100px";
+      div.style.top = "100px";
+      div.style.width = "470px";
+      div.style.height = "210px";
+      document.body.appendChild(div);
 
-      colorPick.addEventListener('mousemove', (e) => {
+      let obj;
+      obj = document.createElement('label');
+      obj.className ="color-frame";obj.id = ("colorFrame"+id);
+      obj.innerHTML  = "ColorPicker v0.1";
+      obj.style.left = "-1px";obj.style.top = "-1px";
+      obj.style.width = "470px";obj.style.height = "20px";
+      div.appendChild(obj);
+
+      obj = document.createElement('canvas');
+      obj.className ="color-pick";obj.id = ("colorPick"+id);
+      obj.style.left = "10px";obj.style.top = "30px";
+      obj.width = 170;obj.height = 170;
+      div.appendChild(obj);
+
+      obj = document.createElement('canvas');
+      obj.className ="color-lever";obj.id = ("colorLeverY"+id);
+      obj.style.left = "190px";obj.style.top = "30px";
+      obj.width = 20;obj.height = 170;
+      div.appendChild(obj);
+
+      let identifier = ["H","S","V","R","G","B"];
+      for(let i=1;i<=6;i++){
+
+      obj = document.createElement('label');
+      obj.className ="color-txt";
+      obj.UNSELECTABLE = "on";
+      obj.innerHTML  = identifier[i-1]+":";
+      obj.style.left = "240px";obj.style.top = (30*i)+"px";
+      obj.style.width = "20px";obj.style.height = "20px";
+      div.appendChild(obj);
+
+      obj = document.createElement('canvas');
+      obj.className ="color-lever";obj.id = ("colorLeverX"+i+""+id);
+      obj.style.left = "270px";obj.style.top = 30*i+"px";
+      obj.width = 140;obj.height = 20;
+      div.appendChild(obj);
+
+
+      obj = document.createElement('input');
+      obj.className ="color-input";obj.id = ("colorTxtInput"+i+""+id);
+      obj.style.left = "420px";obj.style.top = (30*i)+"px";
+      obj.style.width = "40px";obj.style.height = "20px";
+      div.appendChild(obj);
+      }
+
+
+    }
+    addEvents(){
+      document.addEventListener('mousedown', (e) => {this.mouseDown=true;console.log(this.mouseDown);});
+      document.addEventListener('mouseup', (e) => {this.mouseDown=false;console.log(this.mouseDown);this.aktiveElement=0;});
+
+
+
+      document.addEventListener('mousemove', (e) => {if (this.mouseDown===true){      this.startRender() }});
+
+      document.getElementById("colorFrame"+this.id).addEventListener('mousemove', (e) => {
+        if (this.mouseDown===true){        
+          this.posX += e.movementX
+          this.posY += e.movementY
+          let div = document.getElementById("colorDiv"+this.id);
+          div.style.left = this.posX+"px";
+          div.style.top = this.posY+"px";
+        }
+      });
+      document.getElementById("colorPick"+this.id).addEventListener('mousemove', (e) => {
         if (this.mouseDown===true){
-          let click = this.click(e,180,180);
-          this.colorHSV[2] = click[0];this.colorHSV[1] = click[1];
+          this.aktiveElement=1;
+          let click = this.click(e.layerX-5,e.layerY-5,160,160);
+          this.colorHSV[2] = click[0];this.colorHSV[1] = 1-click[1];
          // this.colorRGB = this.createRGBfromHSV(this.colorHSV);
         }
       });
-      colorLeverY.addEventListener('mousemove', (e) => {
+      document.getElementById("colorLeverY"+this.id).addEventListener('mousemove', (e) => {
         if (this.mouseDown===true){
-          let click = this.click(e,1,180);
+          this.aktiveElement=1;
+          let click = this.click(e.layerX,e.layerY+0.01,1,170);
           this.colorHSV[0] = 1-click[1];
           //this.colorRGB = this.createRGBfromHSV(this.colorHSV);
         }
       });
     }
-    buildHTML(id){
-      colorPick.width = 180;
-      colorPick.height = 180;
-      colorLeverY.width=10;
-      colorLeverY.height=180;
-
-      colorLeverX1.width=180;
-      colorLeverX1.height=10;
-          colorLeverX2.width=180;
-      colorLeverX2.height=10;
-          colorLeverX3.width=180;
-      colorLeverX3.height=10;
-          colorLeverX4.width=180;
-      colorLeverX4.height=10;
-          colorLeverX5.width=180;
-      colorLeverX5.height=10;
-          colorLeverX6.width=180;
-      colorLeverX6.height=10;
-    }
     setLevler(lever1,lever2,lever3,lever4,lever5,lever6){
     }
   //--Logik---------------------------------------------------------------------------------------------------------------------------------
-    show(color){
+    show(posX,posY){
+      this.posX=posX;this.posY=posY;
+      let div = document.getElementById("colorDiv"+this.id)
+      div.style.display = "inline";
+      div.style.left = this.posX+"px";
+      div.style.top = this.posY+"px";
     }
-    hide(color){
+    hide(){
+      document.getElementById("colorDiv"+this.id).style.display = "none";
     }
-    click(e,width,height){
-      return [e.layerX/width,e.layerY/height];
+    click(posX,posY,width,height){
+      posX/=width;posY/=height
+      if (posX<0)posX=0;if (posY<0)posY=0;
+      if (posX>1)posX=1;if (posY>1)posY=1;
+      return [posX,posY];
     }
   //--ColorOperators---------------------------------------------------------------------------------------------------------------------------------
     createRGBfromH(value,max) {
@@ -81,9 +148,9 @@ class ColorPicker{
     addRGBandS(value,max,oldvalue) {
       let colorRGB = oldvalue
       let pro = (((value)/max));
-      colorRGB[0] = colorRGB[0]*(1-pro)+((255)*(pro));//r
-      colorRGB[1] = colorRGB[1]*(1-pro)+((255)*(pro));//g
-      colorRGB[2] = colorRGB[2]*(1-pro)+((255)*(pro));//b
+      colorRGB[0] = colorRGB[0]*(pro)+((255)*(1-pro));//r
+      colorRGB[1] = colorRGB[1]*(pro)+((255)*(1-pro));//g
+      colorRGB[2] = colorRGB[2]*(pro)+((255)*(1-pro));//b
       return colorRGB;
     }
     addRGBandV(value,max,oldvalue) {
@@ -108,11 +175,11 @@ class ColorPicker{
       return [colorRGB[0],colorRGB[1],colorRGB[2]];//pass by value
     }
   //--Render---------------------------------------------------------------------------------------------------------------------------------
-    drawColorPick() {
+    drawColorPick(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
-      canvas.width = 100;
-      canvas.height = 100;
+      canvas.width = resolution;
+      canvas.height = resolution;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
         for (let ix = 0; ix < canvas.width; ix++) {
@@ -120,7 +187,7 @@ class ColorPicker{
             let offset = (imgData.width * iy + ix) * 4;
             mod.data[offset + 3] = 255;//a
             let color = this.createRGBfromH(this.colorHSV[0],1);
-            color = this.addRGBandS(iy,canvas.height,color);
+            color = this.addRGBandS((resolution-1)-iy,canvas.height,color);
             color = this.addRGBandV(ix,canvas.width,color);
             mod.data[offset]     = color[0];
             mod.data[offset + 1] = color[1];
@@ -129,23 +196,19 @@ class ColorPicker{
         }
       context.putImageData(mod, 0, 0);
 
-      context.fillStyle = "rgba(0,0,0,1)"; 
-      context.fillRect((this.colorHSV[2]*canvas.width)|0, 0,1, canvas.height);
-      context.fillRect(0, (this.colorHSV[1]*canvas.height)|0,canvas.width, 1);
-
       return (canvas);
     };
-    drawColorLeverY() {
+    drawColorLeverY(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
       canvas.width = 1;
-      canvas.height = 42;
+      canvas.height = resolution;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
           for (let iy = 0; iy < canvas.height; iy++) {
             let offset = (imgData.width * iy) * 4;
             mod.data[offset + 3] = 255;//a
-            let color = this.createRGBfromH(41-iy,canvas.height);
+            let color = this.createRGBfromH((resolution-1)-iy,canvas.height);
             mod.data[offset]     = color[0];
             mod.data[offset + 1] = color[1];
             mod.data[offset + 2] = color[2];
@@ -153,10 +216,10 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX1() {
+    drawColorLeverX1(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
-      canvas.width = 42;
+      canvas.width = resolution;
       canvas.height = 1;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -173,10 +236,10 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX2() {
+    drawColorLeverX2(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
-      canvas.width = 42;
+      canvas.width = resolution;
       canvas.height = 1;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -184,7 +247,7 @@ class ColorPicker{
           let offset = ix * 4;
           mod.data[offset + 3] = 255;//a
           let color = this.createRGBfromH(this.colorHSV[0],1);
-          color = this.addRGBandS(41-ix,canvas.width,color);
+          color = this.addRGBandS(ix,canvas.width,color);
           color = this.addRGBandV(this.colorHSV[2],1,color);
           mod.data[offset]     = color[0];
           mod.data[offset + 1] = color[1];
@@ -193,10 +256,10 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX3() {
+    drawColorLeverX3(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
-      canvas.width = 42;
+      canvas.width = resolution;
       canvas.height = 1;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -213,10 +276,10 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX4() {
+    drawColorLeverX4(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
-      canvas.width = 42;
+      canvas.width = resolution;
       canvas.height = 1;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -232,10 +295,10 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX5() {
+    drawColorLeverX5(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
-      canvas.width = 42;
+      canvas.width = resolution;
       canvas.height = 1;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -251,10 +314,10 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX6() {
+    drawColorLeverX6(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
-      canvas.width = 42;
+      canvas.width = resolution;
       canvas.height = 1;
       let mod = context.createImageData(canvas.width, canvas.height);
       let imgData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -270,36 +333,64 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
+    startRender(){
+      console.log(this.aktiveElement);
+      if (this.mouseDown===true && this.aktiveElement===1){
+        this.render();
+        setTimeout(this.startRender.bind(this), 40);
+      }
+    }
+    clearCanvas(canvasName,SmoothingEnabled,fillStyle){
+      let canvas = document.getElementById(""+canvasName+""+this.id);
+      let context = canvas.getContext("2d");
+      context.imageSmoothingEnabled = SmoothingEnabled;context.mozImageSmoothingEnabled = SmoothingEnabled;context.fillStyle = fillStyle; 
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      return context;
+    }
     render(){
-      let context;let SmoothingEnabled = false;
-      context  =  colorPick.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorPick(), 0, 0, 180, 180);
-      context  =  colorLeverY.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorLeverY(), 0, 0, 10, 180);
-
-      context  =  colorLeverX1.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorLeverX1(), 0, 0, 180, 10);
-      context  =  colorLeverX2.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorLeverX2(), 0, 0, 180, 10);
-      context  =  colorLeverX3.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorLeverX3(), 0, 0, 180, 10);
+      let context;let SmoothingEnabled = true;
+      let resolution = 42;
+      let fillStyle = "rgba(75,75,75,1)"; 
 
       this.colorRGB = this.createRGBfromHSV(this.colorHSV);
 
-      context  =  colorLeverX4.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorLeverX4(), 0, 0, 180, 10);
-      context  =  colorLeverX5.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorLeverX5(), 0, 0, 180, 10);
-      context  =  colorLeverX6.getContext("2d");
-      context.imageSmoothingEnabled = false;context.mozImageSmoothingEnabled = SmoothingEnabled;
-      context.drawImage(this.drawColorLeverX6(), 0, 0, 180, 10);
+      context = this.clearCanvas("colorPick",SmoothingEnabled,fillStyle)
+      context.fillRect(0, this.colorHSV[1]*160, 170, 10);
+      context.fillRect(this.colorHSV[2]*160, 0, 10, 170);
+      context.drawImage(this.drawColorPick(resolution), 5, 5, 160, 160);
 
+      context = this.clearCanvas("colorLeverY",SmoothingEnabled,fillStyle)
+      context.fillRect(0, (1-this.colorHSV[0])*170-5, 20, 10);
+      context.drawImage(this.drawColorLeverY(resolution), 5, 0, 10, 170);
+
+      context = this.clearCanvas("colorLeverX1",SmoothingEnabled,fillStyle)
+      context.fillRect((this.colorHSV[0])*140-5,0, 10, 20);
+      context.drawImage(this.drawColorLeverX1(resolution), 0, 5, 140, 10);
+      document.getElementById("colorTxtInput1"+this.id).value = (this.colorHSV[0]*360)|0;
+
+      context = this.clearCanvas("colorLeverX2",SmoothingEnabled,fillStyle)
+      context.fillRect((this.colorHSV[1])*140-5,0, 10, 20);
+      context.drawImage(this.drawColorLeverX2(resolution), 0, 5, 140, 10);
+      document.getElementById("colorTxtInput2"+this.id).value = (this.colorHSV[1]*100)|0;
+
+      context = this.clearCanvas("colorLeverX3",SmoothingEnabled,fillStyle)
+      context.fillRect((this.colorHSV[2])*140-5,0, 10, 20);
+      context.drawImage(this.drawColorLeverX3(resolution), 0, 5, 140, 10);
+      document.getElementById("colorTxtInput3"+this.id).value = (this.colorHSV[2]*100)|0;
+
+      context = this.clearCanvas("colorLeverX4",SmoothingEnabled,fillStyle)
+      context.fillRect((this.colorRGB[0]/255)*140-5,0, 10, 20);
+      context.drawImage(this.drawColorLeverX4(resolution), 0, 5, 140, 10);
+      document.getElementById("colorTxtInput4"+this.id).value = this.colorRGB[0]|0;
+
+      context = this.clearCanvas("colorLeverX5",SmoothingEnabled,fillStyle)
+      context.fillRect((this.colorRGB[1]/255)*140-5,0, 10, 20);
+      context.drawImage(this.drawColorLeverX5(resolution), 0, 5, 140, 10);
+      document.getElementById("colorTxtInput5"+this.id).value = this.colorRGB[1]|0;
+      
+      context = this.clearCanvas("colorLeverX6",SmoothingEnabled,fillStyle)
+      context.fillRect((this.colorRGB[2]/255)*140-5,0, 10, 20);
+      context.drawImage(this.drawColorLeverX6(resolution), 0, 5, 140, 10);
+      document.getElementById("colorTxtInput6"+this.id).value = this.colorRGB[2]|0;
     }
 }
