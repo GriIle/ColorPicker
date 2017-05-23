@@ -10,68 +10,70 @@ class ColorPicker{
       this.mouseDown = false;
       this.aktiveElementObj = null;
       this.aktiveElement = 0;
-
+      this.htmlDiv;
+      this.htmlFrame;
+      this.htmlObj = [];
+      this.htmlCanvas;
+      this.htmlLeverY;
+      this.htmlLeverX = [];
+      this.htmlTxtX = [];
       this.buildHTML(id);
       this.addEvents();
       this.startRender();
 
     }
     buildHTML(id){
-      let div;
-      div = document.createElement('div');
-      div.className ="color-div";
-      div.style.display = "none";
-      div.UNSELECTABLE = "on";
-      div.id = ("colorDiv"+id);
-      div.style.left = "100px";
-      div.style.top = "100px";
-      div.style.width = "470px";
-      div.style.height = "210px";
-      document.body.appendChild(div);
+      this.htmlDiv = document.createElement('div');
+      this.htmlDiv.className ="color-div";
+      this.htmlDiv.style.display = "none";
+      this.htmlDiv.style.left = "100px";
+      this.htmlDiv.style.top = "100px";
+      this.htmlDiv.style.width = "470px";
+      this.htmlDiv.style.height = "210px";
+      document.body.appendChild(this.htmlDiv);
 
       let obj;
-      obj = document.createElement('label');
-      obj.className ="color-frame";obj.id = ("colorFrame"+id);
-      obj.innerHTML  = "ColorPicker v0.1";
-      obj.style.left = "-1px";obj.style.top = "-1px";
-      obj.style.width = "470px";obj.style.height = "20px";
-      div.appendChild(obj);
+      this.htmlFrame = document.createElement('label');
+      this.htmlFrame.className ="color-frame";
+      this.htmlFrame.innerHTML  = "ColorPicker v0.1";
+      this.htmlFrame.style.left = "-1px";this.htmlFrame.style.top = "-1px";
+      this.htmlFrame.style.width = "470px";this.htmlFrame.style.height = "20px";
+      this.htmlDiv.appendChild(this.htmlFrame);
 
-      obj = document.createElement('canvas');
-      obj.className ="color-pick";obj.id = ("colorPick"+id);
-      obj.style.left = "10px";obj.style.top = "30px";
-      obj.width = 170;obj.height = 170;
-      div.appendChild(obj);
+      this.htmlCanvas = document.createElement('canvas');
+      this.htmlCanvas.className ="color-pick";
+      this.htmlCanvas.style.left = "10px";this.htmlCanvas.style.top = "30px";
+      this.htmlCanvas.width = 170;this.htmlCanvas.height = 170;
+      this.htmlDiv.appendChild(this.htmlCanvas);
 
-      obj = document.createElement('canvas');
-      obj.className ="color-lever";obj.id = ("colorLeverY"+id);
-      obj.style.left = "190px";obj.style.top = "30px";
-      obj.width = 20;obj.height = 170;
-      div.appendChild(obj);
+      this.htmlLeverY = document.createElement('canvas');
+      this.htmlLeverY.className ="color-lever";
+      this.htmlLeverY.style.left = "190px";this.htmlLeverY.style.top = "30px";
+      this.htmlLeverY.width = 20;this.htmlLeverY.height = 170;
+      this.htmlDiv.appendChild(this.htmlLeverY);
 
       let identifier = ["H","S","V","R","G","B"];
       for(let i=1;i<=6;i++){
 
       obj = document.createElement('label');
       obj.className ="color-txt";
-      obj.UNSELECTABLE = "on";
       obj.innerHTML  = identifier[i-1]+":";
       obj.style.left = "240px";obj.style.top = (30*i)+"px";
       obj.style.width = "20px";obj.style.height = "20px";
-      div.appendChild(obj);
+      this.htmlDiv.appendChild(obj);
 
-      obj = document.createElement('canvas');
-      obj.className ="color-lever";obj.id = ("colorLeverX"+i+""+id);
-      obj.style.left = "270px";obj.style.top = 30*i+"px";
-      obj.width = 140;obj.height = 20;
-      div.appendChild(obj);
+      this.htmlLeverX[i-1] = document.createElement('canvas');
+      this.htmlLeverX[i-1].className ="color-lever";
+      this.htmlLeverX[i-1].style.left = "270px";this.htmlLeverX[i-1].style.top = 30*i+"px";
+      this.htmlLeverX[i-1].width = 140;this.htmlLeverX[i-1].height = 20;
+      this.htmlDiv.appendChild(this.htmlLeverX[i-1]);
 
 
-      obj = document.createElement('input');
-      obj.className ="color-input";obj.id = ("colorTxtInput"+i+""+id);
-      obj.style.left = "420px";obj.style.top = (30*i)+"px";
-      obj.style.width = "40px";obj.style.height = "20px";
-      div.appendChild(obj);
+      this.htmlTxtX[i-1] = document.createElement('input');
+      this.htmlTxtX[i-1].className ="color-input";
+      this.htmlTxtX[i-1].style.left = "420px";this.htmlTxtX[i-1].style.top = (30*i)+"px";
+      this.htmlTxtX[i-1].style.width = "40px";this.htmlTxtX[i-1].style.height = "20px";
+      this.htmlDiv.appendChild(this.htmlTxtX[i-1]);
       }
 
 
@@ -81,26 +83,17 @@ class ColorPicker{
       document.addEventListener('mouseup', (e) => {this.mouseDown=false;console.log(this.mouseDown);this.aktiveElementObj=null;this.aktiveElement=0;});
 
       let obj;
-      obj = document.getElementById("colorFrame"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=1;});
+      this.htmlFrame.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=1;});
 
-      obj = document.getElementById("colorPick"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=2;});
-      obj = document.getElementById("colorLeverY"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=3;});
+      this.htmlCanvas.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=2;});
+      this.htmlLeverY.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=3;});
 
-      obj = document.getElementById("colorLeverX1"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=4;});
-      obj = document.getElementById("colorLeverX2"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=5;});
-      obj = document.getElementById("colorLeverX3"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=6;});
-      obj = document.getElementById("colorLeverX4"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=7;});
-      obj = document.getElementById("colorLeverX5"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=8;});
-      obj = document.getElementById("colorLeverX6"+this.id);
-      obj.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=9;});
+      this.htmlLeverX[0].addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=4;});
+      this.htmlLeverX[1].addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=5;});
+      this.htmlLeverX[2].addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=6;});
+      this.htmlLeverX[3].addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=7;});
+      this.htmlLeverX[4].addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=8;});
+      this.htmlLeverX[5].addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=9;});
 
 
       document.addEventListener('mousemove', (e) => {
@@ -111,49 +104,62 @@ class ColorPicker{
             case 1:
             this.posX += e.movementX
             this.posY += e.movementY
-            let div = document.getElementById("colorDiv"+this.id);
-            div.style.left = this.posX+"px";
-            div.style.top = this.posY+"px";
+            this.htmlDiv.style.left = this.posX+"px";
+            this.htmlDiv.style.top = this.posY+"px";
             break;
             case 2:
-              click = this.click(e.layerX-5,e.layerY-5,160,160);
+              click = this.click(this.htmlCanvas,e,-5,-5,160,160);
               this.colorHSV[2] = click[0];this.colorHSV[1] = 1-click[1];
             break;
             case 3:
-              click = this.click(e.layerX,e.layerY,1,170);
+              click = this.click(this.htmlLeverY,e,0,0,1,170);
               this.colorHSV[0] = 1-click[1];
             break;
             case 4:
-              click = this.click(e.layerX,e.layerY,140,1);
+              click = this.click(this.htmlLeverX[0],e,0,0,140,1);
               this.colorHSV[0] = click[0];
             break;
             case 5:
-              click = this.click(e.layerX,e.layerY,140,1);
+              click = this.click(this.htmlLeverX[1],e,0,0,140,1);
               this.colorHSV[1] = click[0];
             break;
             case 6:
-              click = this.click(e.layerX,e.layerY,140,1);
+              click = this.click(this.htmlLeverX[2],e,0,0,140,1);
               this.colorHSV[2] = click[0];
+            break;
+            case 7:
+              click = this.click(this.htmlLeverX[3],e,0,0,140,1);
+              this.colorRGB[0] = click[0]*255;
+            break;
+            case 8:
+              click = this.click(this.htmlLeverX[4],e,0,0,140,1);
+              this.colorRGB[1] = click[0]*255;
+            break;
+            case 9:
+              click = this.click(this.htmlLeverX[5],e,0,0,140,1);
+              this.colorRGB[2] = click[0]*255;
             break;
           }
         }
       });
-
+    //FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNNNNNNNNNN
     }
     setLevler(lever1,lever2,lever3,lever4,lever5,lever6){
     }
   //--Logik---------------------------------------------------------------------------------------------------------------------------------
     show(posX,posY){
       this.posX=posX;this.posY=posY;
-      let div = document.getElementById("colorDiv"+this.id)
-      div.style.display = "inline";
-      div.style.left = this.posX+"px";
-      div.style.top = this.posY+"px";
+      this.htmlDiv.style.display = "inline";
+      this.htmlDiv.style.left = this.posX+"px";
+      this.htmlDiv.style.top = this.posY+"px";
     }
     hide(){
-      document.getElementById("colorDiv"+this.id).style.display = "none";
+      this.htmlDiv.style.display = "none";
     }
-    click(posX,posY,width,height){
+    click(htmlObj,e,posX,posY,width,height){
+      let rect = htmlObj.getBoundingClientRect();
+      posX+=e.clientX-rect.left;
+      posY+=e.clientY-rect.top;
       posX/=width;posY/=height
       if (posX<0)posX=0;if (posY<0)posY=0;
       if (posX>1)posX=1;if (posY>1)posY=1;
@@ -255,7 +261,7 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX1(resolution) {
+    drawColorLeverX0(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
       canvas.width = resolution;
@@ -275,7 +281,7 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX2(resolution) {
+    drawColorLeverX1(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
       canvas.width = resolution;
@@ -295,7 +301,7 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX3(resolution) {
+    drawColorLeverX2(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
       canvas.width = resolution;
@@ -315,7 +321,7 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX4(resolution) {
+    drawColorLeverX3(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
       canvas.width = resolution;
@@ -334,7 +340,7 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX5(resolution) {
+    drawColorLeverX4(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
       canvas.width = resolution;
@@ -353,7 +359,7 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    drawColorLeverX6(resolution) {
+    drawColorLeverX5(resolution) {
       let canvas = document.createElement("canvas");
       let context  = canvas.getContext("2d");
       canvas.width = resolution;
@@ -376,11 +382,10 @@ class ColorPicker{
         this.render();
         setTimeout(this.startRender.bind(this), 40);
     }
-    clearCanvas(canvasName,SmoothingEnabled,fillStyle){
-      let canvas = document.getElementById(""+canvasName+""+this.id);
-      let context = canvas.getContext("2d");
+    clearCanvas(htmlObj,SmoothingEnabled,fillStyle){
+      let context = htmlObj.getContext("2d");
       context.imageSmoothingEnabled = SmoothingEnabled;context.mozImageSmoothingEnabled = SmoothingEnabled;context.fillStyle = fillStyle; 
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      context.clearRect(0, 0, htmlObj.width, htmlObj.height);
       return context;
     }
     render(){
@@ -389,45 +394,46 @@ class ColorPicker{
       let fillStyle = "rgba(75,75,75,1)"; 
 
       this.colorRGB = this.createRGBfromHSV(this.colorHSV);
-     // console.log(this.createHSVfromRGB(this.colorRGB));
 
-      context = this.clearCanvas("colorPick",SmoothingEnabled,fillStyle)
-      context.fillRect(0, (1-this.colorHSV[1])*160, 170, 10);
-      context.fillRect((this.colorHSV[2])*160, 0, 10, 170);
+      context = this.clearCanvas(this.htmlCanvas,SmoothingEnabled,fillStyle)
+      context.fillRect(0, (1-this.colorHSV[1])*160, 5, 10);
+      context.fillRect(165, (1-this.colorHSV[1])*160, 5, 10);
+      context.fillRect((this.colorHSV[2])*160, 0, 10, 5);
+      context.fillRect((this.colorHSV[2])*160, 165, 10, 5);
       context.drawImage(this.drawColorPick(resolution), 5, 5, 160, 160);
 
-      context = this.clearCanvas("colorLeverY",SmoothingEnabled,fillStyle)
+      context = this.clearCanvas(this.htmlLeverY,SmoothingEnabled,fillStyle)
       context.fillRect(0, (1-this.colorHSV[0])*170-5, 20, 10);
       context.drawImage(this.drawColorLeverY(resolution), 5, 0, 10, 170);
 
-      context = this.clearCanvas("colorLeverX1",SmoothingEnabled,fillStyle)
+      context = this.clearCanvas(this.htmlLeverX[0],SmoothingEnabled,fillStyle)
       context.fillRect((this.colorHSV[0])*140-5,0, 10, 20);
-      context.drawImage(this.drawColorLeverX1(resolution), 0, 5, 140, 10);
-      document.getElementById("colorTxtInput1"+this.id).value = (this.colorHSV[0]*360)|0;
+      context.drawImage(this.drawColorLeverX0(resolution), 0, 5, 140, 10);
+      this.htmlTxtX[0].value = (this.colorHSV[0]*360)|0;
 
-      context = this.clearCanvas("colorLeverX2",SmoothingEnabled,fillStyle)
+      context = this.clearCanvas(this.htmlLeverX[1],SmoothingEnabled,fillStyle)
       context.fillRect((this.colorHSV[1])*140-5,0, 10, 20);
-      context.drawImage(this.drawColorLeverX2(resolution), 0, 5, 140, 10);
-      document.getElementById("colorTxtInput2"+this.id).value = (this.colorHSV[1]*100)|0;
+      context.drawImage(this.drawColorLeverX1(resolution), 0, 5, 140, 10);
+      this.htmlTxtX[1].value = (this.colorHSV[1]*100)|0;
 
-      context = this.clearCanvas("colorLeverX3",SmoothingEnabled,fillStyle)
+      context = this.clearCanvas(this.htmlLeverX[2],SmoothingEnabled,fillStyle)
       context.fillRect((this.colorHSV[2])*140-5,0, 10, 20);
-      context.drawImage(this.drawColorLeverX3(resolution), 0, 5, 140, 10);
-      document.getElementById("colorTxtInput3"+this.id).value = (this.colorHSV[2]*100)|0;
+      context.drawImage(this.drawColorLeverX2(resolution), 0, 5, 140, 10);
+      this.htmlTxtX[2].value = (this.colorHSV[2]*100)|0;
 
-      context = this.clearCanvas("colorLeverX4",SmoothingEnabled,fillStyle)
+      context = this.clearCanvas(this.htmlLeverX[3],SmoothingEnabled,fillStyle)
       context.fillRect((this.colorRGB[0]/255)*140-5,0, 10, 20);
-      context.drawImage(this.drawColorLeverX4(resolution), 0, 5, 140, 10);
-      document.getElementById("colorTxtInput4"+this.id).value = this.colorRGB[0]|0;
+      context.drawImage(this.drawColorLeverX3(resolution), 0, 5, 140, 10);
+      this.htmlTxtX[3].value = this.colorRGB[0]|0;
 
-      context = this.clearCanvas("colorLeverX5",SmoothingEnabled,fillStyle)
+      context = this.clearCanvas(this.htmlLeverX[4],SmoothingEnabled,fillStyle)
       context.fillRect((this.colorRGB[1]/255)*140-5,0, 10, 20);
-      context.drawImage(this.drawColorLeverX5(resolution), 0, 5, 140, 10);
-      document.getElementById("colorTxtInput5"+this.id).value = this.colorRGB[1]|0;
+      context.drawImage(this.drawColorLeverX4(resolution), 0, 5, 140, 10);
+      this.htmlTxtX[4].value = this.colorRGB[1]|0;
       
-      context = this.clearCanvas("colorLeverX6",SmoothingEnabled,fillStyle)
+      context = this.clearCanvas(this.htmlLeverX[5],SmoothingEnabled,fillStyle)
       context.fillRect((this.colorRGB[2]/255)*140-5,0, 10, 20);
-      context.drawImage(this.drawColorLeverX6(resolution), 0, 5, 140, 10);
-      document.getElementById("colorTxtInput6"+this.id).value = this.colorRGB[2]|0;
+      context.drawImage(this.drawColorLeverX5(resolution), 0, 5, 140, 10);
+      this.htmlTxtX[5].value = this.colorRGB[2]|0;
     }
 }
