@@ -168,6 +168,7 @@ class ColorPicker{
   //--ColorOperators---------------------------------------------------------------------------------------------------------------------------------
     createRGBfromH(value,max) {
       let pos = (value / max*6)|0;
+      if(pos>5)pos-=6;
       let x = value / max * (256*6);
       let r = 0,g = 0,b = 0;
       while (x > 255)x-=255;
