@@ -110,34 +110,42 @@ class ColorPicker{
             case 2:
               click = this.click(this.htmlCanvas,e,-5,-5,160,160);
               this.colorHSV[2] = click[0];this.colorHSV[1] = 1-click[1];
+			  this.colorRGB = this.createRGBfromHSV(this.colorHSV);
             break;
             case 3:
               click = this.click(this.htmlLeverY,e,0,0,1,170);
               this.colorHSV[0] = 1-click[1];
+			  this.colorRGB = this.createRGBfromHSV(this.colorHSV);
             break;
             case 4:
               click = this.click(this.htmlLeverX[0],e,0,0,140,1);
               this.colorHSV[0] = click[0];
+			  this.colorRGB = this.createRGBfromHSV(this.colorHSV);
             break;
             case 5:
               click = this.click(this.htmlLeverX[1],e,0,0,140,1);
               this.colorHSV[1] = click[0];
+			  this.colorRGB = this.createRGBfromHSV(this.colorHSV);
             break;
             case 6:
               click = this.click(this.htmlLeverX[2],e,0,0,140,1);
               this.colorHSV[2] = click[0];
+			  this.colorRGB = this.createRGBfromHSV(this.colorHSV);
             break;
             case 7:
               click = this.click(this.htmlLeverX[3],e,0,0,140,1);
               this.colorRGB[0] = click[0]*255;
+			  this.colorHSV = this.createHSVfromRGB(this.colorRGB);
             break;
             case 8:
               click = this.click(this.htmlLeverX[4],e,0,0,140,1);
               this.colorRGB[1] = click[0]*255;
+			  this.colorHSV = this.createHSVfromRGB(this.colorRGB);
             break;
             case 9:
               click = this.click(this.htmlLeverX[5],e,0,0,140,1);
               this.colorRGB[2] = click[0]*255;
+			  this.colorHSV = this.createHSVfromRGB(this.colorRGB);
             break;
           }
         }
@@ -206,16 +214,40 @@ class ColorPicker{
       return colorRGB;
     }
     createHSVfromRGB(colorRGB){
+
       let r = colorRGB[0]/255,g = colorRGB[1]/255,b = colorRGB[2]/255
       let min,max
       min = r;if(min > g)min=g;if(min > b)min=b;
       max = r;if(max < g)max=g;if(max < b)max=b;
-      let a = max - min;
-      let H = (60*(g-b)/a)+(60*(b-r)/a)+(60*(r-g)/a)+6;
-      let S = 0;
-      let V = 0;
-      let colorHSV=[H,S,V];
-      return colorHSV;
+      let delta = max - min;
+      let h,s,v;
+	  v = max;   
+	  if (delta < 0.00001)
+	  {
+        s = 0;
+        h = 0; // undefined, maybe nan?
+        return [h/360,s,v];
+	  }
+	  
+	  if( max > 0.0 ) { // NOTE: if Max is == 0, this divide would cause a crash
+        s = (delta / max);                  // s
+	  }else{
+        // if max is 0, then r = g = b = 0              
+        // s = 0, v is undefined
+        s = 0.0;
+        h = null;   
+	    // its now undefined
+        return [h/360,s,v];
+      }
+	  // > is bogus, just keeps compilor happy
+	  if( r >= max ) h = ( g - b ) / delta;        // between yellow & magenta
+      else if( g >= max ) h = 2.0 + ( b - r ) / delta;  // between cyan & yellow
+      else h = 4.0 + ( r - g ) / delta;  // between magenta & cyan
+	  h *= 60.0;                              // degrees
+      if( h < 0.0 ) h += 360.0;
+
+      return [h/360,s,v];
+
     }
     createRGBfromRGB(colorRGB){
       return [colorRGB[0],colorRGB[1],colorRGB[2]];//pass by value
@@ -393,8 +425,7 @@ class ColorPicker{
       let context;let SmoothingEnabled = true;
       let resolution = 42;
       let fillStyle = "rgba(75,75,75,1)"; 
-
-      this.colorRGB = this.createRGBfromHSV(this.colorHSV);
+	
 
       context = this.clearCanvas(this.htmlCanvas,SmoothingEnabled,fillStyle)
       context.fillRect(0, (1-this.colorHSV[1])*160, 5, 10);
