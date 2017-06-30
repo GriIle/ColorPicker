@@ -1,8 +1,8 @@
 "use strict";
 class ColorPicker{
   //--buildColorPicker---------------------------------------------------------------------------------------------------------------------------------
-    constructor(id) {
-      this.id = id;
+    constructor() {
+      //logik
       this.posX=0;
       this.posY=0;
       this.colorHSV = [0,0,0];
@@ -10,6 +10,8 @@ class ColorPicker{
       this.mouseDown = false;
       this.aktiveElementObj = null;
       this.aktiveElement = 0;
+
+      //html
       this.htmlDiv;
       this.htmlFrame;
       this.htmlObj = [];
@@ -18,10 +20,10 @@ class ColorPicker{
       this.htmlLeverX = [];
       this.htmlTxtX = [];
       this.htmlLabelX = [];
-      this.buildHTML(id);
-      this.addEvents();
-      this.startRender();
+      this.htmlButOk;
+      this.htmlButClose;
 
+      //window style
       this.fontColor
       this.inputColor
       this.leverColor
@@ -30,13 +32,19 @@ class ColorPicker{
       this.border
       this.font
 
+      //color ref
+      this.ColorRef
+
+      //start colorPicker
+      this.buildHTML();
+      this.addEvents();
     }
-    buildHTML(id){
+    buildHTML(){
       this.htmlDiv = document.createElement('div');
       this.htmlDiv.style.position = "absolute";
       this.htmlDiv.style.display = "none";
       this.htmlDiv.style.width = "470px";
-      this.htmlDiv.style.height = "210px";
+      this.htmlDiv.style.height = "250px";
       document.body.appendChild(this.htmlDiv);
 
       this.htmlFrame = document.createElement('div');
@@ -44,6 +52,20 @@ class ColorPicker{
       this.htmlFrame.style.left = "0px";this.htmlFrame.style.top = "0px";
       this.htmlFrame.style.width = "470px";this.htmlFrame.style.height = "20px";
       this.htmlDiv.appendChild(this.htmlFrame);
+
+      this.htmlButOk = document.createElement('button');
+      this.htmlButOk.style.position = "absolute";
+      this.htmlButOk.style.left = "10px";this.htmlButOk.style.top = "210px";
+      this.htmlButOk.style.width = "95px";this.htmlButOk.style.height = "30px";
+      this.htmlButOk.innerHTML = "OK";
+      this.htmlDiv.appendChild(this.htmlButOk);
+
+      this.htmlButClose = document.createElement('button');
+      this.htmlButClose.style.position = "absolute";
+      this.htmlButClose.style.left = "115px";this.htmlButClose.style.top = "210px";
+      this.htmlButClose.style.width = "95px";this.htmlButClose.style.height = "30px";
+      this.htmlButClose.innerHTML = "Close";
+      this.htmlDiv.appendChild(this.htmlButClose);
 
       this.htmlCanvas = document.createElement('canvas');
       this.htmlCanvas.style.position = "absolute";
@@ -92,6 +114,8 @@ class ColorPicker{
 
       this.applyStyle(this.htmlDiv,2)
       this.applyStyle(this.htmlFrame,3)
+      this.applyStyle(this.htmlButOk,1)
+      this.applyStyle(this.htmlButClose,1)
       this.applyStyle(this.htmlCanvas,1)
       this.applyStyle(this.htmlLeverY,1)
       for(let i=1;i<=6;i++){
@@ -104,25 +128,27 @@ class ColorPicker{
       obj.style.position = "absolute";
       obj.style.color = this.fontColor;
       obj.style.font = this.font;
-      obj.style.msUserSelect = "none";
-      obj.style.webkitUserSelect = "none";
-      obj.style.mozUserSelect = "none";
-      obj.style.userSelect = "none";
+      obj.style.textAlign = "center";
+      obj.style.outline = "none";
+      obj.style.msUserSelect = obj.style.webkitUserSelect = obj.style.mozUserSelect = obj.style.userSelect = "none";
       if(style!==0) obj.style.border = this.border;
       switch(style)
       {
-        case 1:obj.style.background = this.inputColor;break;
+        case 1:obj.style.background = this.inputColor;obj.style.msUserSelect = obj.style.webkitUserSelect = obj.style.mozUserSelect = obj.style.userSelect = null;break;
         case 2:obj.style.background = this.backColor;break;
         case 3:obj.style.background = this.frameColor;break;
       }
 
     }
     addEvents(){
-      document.addEventListener('mousedown', (e) => {this.mouseDown=true;console.log(this.mouseDown);});
-      document.addEventListener('mouseup', (e) => {this.mouseDown=false;console.log(this.mouseDown);this.aktiveElementObj=null;this.aktiveElement=0;});
+      document.addEventListener('mousedown', (e) => {this.mouseDown=true;});
+      document.addEventListener('mouseup', (e) => {this.mouseDown=false;this.aktiveElementObj=null;this.aktiveElement=0;});
 
       let obj;
       this.htmlFrame.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=1;});
+
+      //this.htmlButOk.addEventListener('mousedown', (e) => {this.ColorRef()});
+      this.htmlButClose.addEventListener('mousedown', (e) => {this.hide()});
 
       this.htmlCanvas.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=2;});
       this.htmlLeverY.addEventListener('mousedown', (e) => {this.aktiveElementObj=obj;this.aktiveElement=3;});
@@ -138,34 +164,40 @@ class ColorPicker{
         if(this.htmlTxtX[0].value<0)this.htmlTxtX[0].value=0;
         else if(this.htmlTxtX[0].value>360)this.htmlTxtX[0].value=360;
         this.colorHSV[0] = this.htmlTxtX[0].value/360
+        this.render();
       })
       this.htmlTxtX[1].addEventListener('change', (e) => {
         if(this.htmlTxtX[1].value<0)this.htmlTxtX[1].value=0;
         else if(this.htmlTxtX[1].value>100)this.htmlTxtX[1].value=100;
         this.colorHSV[1] = this.htmlTxtX[1].value/100
+        this.render();
       })
       this.htmlTxtX[2].addEventListener('change', (e) => {
         if(this.htmlTxtX[2].value<0)this.htmlTxtX[2].value=0;
         else if(this.htmlTxtX[2].value>100)this.htmlTxtX[2].value=100;
         this.colorHSV[2] = this.htmlTxtX[2].value/100
+        this.render();
       })
       this.htmlTxtX[3].addEventListener('change', (e) => {
         if(this.htmlTxtX[3].value<0)this.htmlTxtX[3].value=0;
         else if(this.htmlTxtX[3].value>255)this.htmlTxtX[3].value=255;
         this.colorRGB[0] = this.htmlTxtX[3].value; 
         this.colorHSV = this.createHSVfromRGB(this.colorRGB);
+        this.render();
       })
       this.htmlTxtX[4].addEventListener('change', (e) => {
         if(this.htmlTxtX[4].value<0)this.htmlTxtX[4].value=0;
         else if(this.htmlTxtX[4].value>255)this.htmlTxtX[4].value=255;
         this.colorRGB[1] = this.htmlTxtX[4].value; 
         this.colorHSV = this.createHSVfromRGB(this.colorRGB);
+        this.render();
       })
       this.htmlTxtX[5].addEventListener('change', (e) => {
         if(this.htmlTxtX[5].value<0)this.htmlTxtX[5].value=0;
         else if(this.htmlTxtX[5].value>255)this.htmlTxtX[5].value=255;
         this.colorRGB[2] = this.htmlTxtX[5].value; 
         this.colorHSV = this.createHSVfromRGB(this.colorRGB);
+        this.render();
       })
 
 
@@ -222,7 +254,7 @@ class ColorPicker{
 			        this.colorHSV = this.createHSVfromRGB(this.colorRGB);
             break;
           }
-          if (this.aktiveElement!==0)this.UpdateTxtX();
+          if (this.aktiveElement!==0){this.render();}
         }
       });
     //FUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUNNNNNNNNNNNNNNNNNNNNNNNNN
@@ -233,6 +265,7 @@ class ColorPicker{
       this.htmlDiv.style.display = "inline";
       this.htmlDiv.style.left = this.posX+"px";
       this.htmlDiv.style.top = this.posY+"px";
+      this.render();
     }
     hide(){
       this.htmlDiv.style.display = "none";
@@ -246,13 +279,16 @@ class ColorPicker{
       if (posX>1)posX=1;if (posY>1)posY=1;
       return [posX,posY];
     }
-    UpdateTxtX(){
-      this.htmlTxtX[0].value = (this.colorHSV[0]*360)|0;
-      this.htmlTxtX[1].value = (this.colorHSV[1]*100)|0;
-      this.htmlTxtX[2].value = (this.colorHSV[2]*100)|0;
-      this.htmlTxtX[3].value = this.colorRGB[0]|0;
-      this.htmlTxtX[4].value = this.colorRGB[1]|0;
-      this.htmlTxtX[5].value = this.colorRGB[2]|0;
+    setRefToColor(func){
+      this.htmlButOk.addEventListener('mousedown', func);
+    }
+    returnColor(mode){
+      switch(mode)
+      {
+        case "RGB":    return this.colorRGB;
+        case "HSV":    return this.colorHSV;
+        case "cssRGB": return "rgb("+(this.colorRGB[0]|0)+','+(this.colorRGB[1]|0)+','+(this.colorRGB[2]|0)+')';
+      }
     }
   //--ColorOperators---------------------------------------------------------------------------------------------------------------------------------
     createRGBfromH(value,max) {
@@ -302,17 +338,17 @@ class ColorPicker{
       max = r;if(max < g)max=g;if(max < b)max=b;
       let delta = max - min;
       let h,s,v;
-	  v = max;   
-	  if (delta < 0.00001)
-	  {
-        s = 0;
-        h = 0; // undefined, maybe nan?
-        return [h/360,s,v];
-	  }
-	  
-	  if( max > 0.0 ) { // NOTE: if Max is == 0, this divide would cause a crash
-        s = (delta / max);                  // s
-	  }else{
+      v = max;   
+      if (delta < 0.00001)
+      {
+          s = 0;
+          h = 0; // undefined, maybe nan?
+          return [h/360,s,v];
+      }
+      
+      if( max > 0.0 ) { // NOTE: if Max is == 0, this divide would cause a crash
+          s = (delta / max);                  // s
+      }else{
         // if max is 0, then r = g = b = 0              
         // s = 0, v is undefined
         s = 0.0;
@@ -321,10 +357,10 @@ class ColorPicker{
         return [h/360,s,v];
       }
 	  // > is bogus, just keeps compilor happy
-	  if( r >= max ) h = ( g - b ) / delta;        // between yellow & magenta
+	    if( r >= max ) h = ( g - b ) / delta;        // between yellow & magenta
       else if( g >= max ) h = 2.0 + ( b - r ) / delta;  // between cyan & yellow
       else h = 4.0 + ( r - g ) / delta;  // between magenta & cyan
-	  h *= 60.0;                              // degrees
+	    h *= 60.0;                              // degrees
       if( h < 0.0 ) h += 360.0;
 
       return [h/360,s,v];
@@ -492,10 +528,6 @@ class ColorPicker{
       context.putImageData(mod, 0, 0);
       return (canvas);
     };
-    startRender(){
-        this.render();
-        setTimeout(this.startRender.bind(this), 40);
-    }
     clearCanvas(htmlObj,SmoothingEnabled,fillStyle){
       let context = htmlObj.getContext("2d");
       context.imageSmoothingEnabled = SmoothingEnabled;context.mozImageSmoothingEnabled = SmoothingEnabled;context.fillStyle = fillStyle; 
@@ -504,7 +536,7 @@ class ColorPicker{
     }
     render(){
       let context;let SmoothingEnabled = true;
-      let resolution = 42;
+      let resolution = 10;
       let fillStyle = this.leverColor; 
 	
 
@@ -542,5 +574,12 @@ class ColorPicker{
       context = this.clearCanvas(this.htmlLeverX[5],SmoothingEnabled,fillStyle)
       context.fillRect((this.colorRGB[2]/255)*140-5,0, 10, 20);
       context.drawImage(this.drawColorLeverX5(resolution), 0, 5, 140, 10);
+
+      this.htmlTxtX[0].value = (this.colorHSV[0]*360)|0;
+      this.htmlTxtX[1].value = (this.colorHSV[1]*100)|0;
+      this.htmlTxtX[2].value = (this.colorHSV[2]*100)|0;
+      this.htmlTxtX[3].value = this.colorRGB[0]|0;
+      this.htmlTxtX[4].value = this.colorRGB[1]|0;
+      this.htmlTxtX[5].value = this.colorRGB[2]|0;
     }
 }
