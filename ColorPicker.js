@@ -22,6 +22,11 @@ class ColorPicker{
       this.htmlLabelX = [];
       this.htmlButOk;
       this.htmlButClose;
+      this.htmlOldColorLabel;
+      this.htmlCurColorLabel;
+      this.htmlOldColor;
+      this.htmlCurColor;
+      this.htmlPalette = [];
 
       //window style
       this.fontColor
@@ -44,7 +49,7 @@ class ColorPicker{
       this.htmlDiv.style.position = "absolute";
       this.htmlDiv.style.display = "none";
       this.htmlDiv.style.width = "470px";
-      this.htmlDiv.style.height = "250px";
+      this.htmlDiv.style.height = "300px";
       document.body.appendChild(this.htmlDiv);
 
       this.htmlFrame = document.createElement('div');
@@ -53,16 +58,43 @@ class ColorPicker{
       this.htmlFrame.style.width = "470px";this.htmlFrame.style.height = "20px";
       this.htmlDiv.appendChild(this.htmlFrame);
 
+      this.htmlCurColor = document.createElement('canvas');
+      this.htmlCurColor.style.position = "absolute";
+      this.htmlCurColor.style.left = "50px";this.htmlCurColor.style.top = "230px";
+      this.htmlCurColor.width = 160;this.htmlCurColor.height = 20;
+      this.htmlDiv.appendChild(this.htmlCurColor);
+      this.htmlOldColor = document.createElement('canvas');
+      this.htmlOldColor.style.position = "absolute";
+      this.htmlOldColor.style.left = "50px";this.htmlOldColor.style.top = "210px";
+      this.htmlOldColor.width = 160;this.htmlOldColor.height = 20;
+      this.htmlDiv.appendChild(this.htmlOldColor);
+
+      this.htmlCurColorLabel = document.createElement('label');
+      this.htmlCurColorLabel.style.position = "absolute";
+      this.htmlCurColorLabel.innerHTML  = "cur:";
+      this.htmlCurColorLabel.style.left = "10px";this.htmlCurColorLabel.style.top = "230px";
+      this.htmlCurColorLabel.style.height = "20px";
+      this.htmlDiv.appendChild(this.htmlCurColorLabel);
+      this.htmlOldColorLabel = document.createElement('label');
+      this.htmlOldColorLabel.style.position = "absolute";
+      this.htmlOldColorLabel.innerHTML  = "old:";
+      this.htmlOldColorLabel.style.left = "10px";this.htmlOldColorLabel.style.top = "210px";
+      this.htmlOldColorLabel.style.height = "20px";
+      this.htmlDiv.appendChild(this.htmlOldColorLabel);
+
+
+
+
       this.htmlButOk = document.createElement('button');
       this.htmlButOk.style.position = "absolute";
-      this.htmlButOk.style.left = "10px";this.htmlButOk.style.top = "210px";
+      this.htmlButOk.style.left = "10px";this.htmlButOk.style.top = "260px";
       this.htmlButOk.style.width = "95px";this.htmlButOk.style.height = "30px";
       this.htmlButOk.innerHTML = "OK";
       this.htmlDiv.appendChild(this.htmlButOk);
 
       this.htmlButClose = document.createElement('button');
       this.htmlButClose.style.position = "absolute";
-      this.htmlButClose.style.left = "115px";this.htmlButClose.style.top = "210px";
+      this.htmlButClose.style.left = "115px";this.htmlButClose.style.top = "260px";
       this.htmlButClose.style.width = "95px";this.htmlButClose.style.height = "30px";
       this.htmlButClose.innerHTML = "Close";
       this.htmlDiv.appendChild(this.htmlButClose);
@@ -80,27 +112,41 @@ class ColorPicker{
       this.htmlDiv.appendChild(this.htmlLeverY);
 
       let identifier = ["H","S","V","R","G","B"];
-      for(let i=1;i<=6;i++){
+      for(let i=0;i<6;i++){
 
-        this.htmlLabelX[i-1] = document.createElement('label');
-        this.htmlLabelX[i-1].style.position = "absolute";
-        this.htmlLabelX[i-1].innerHTML  = identifier[i-1]+":";
-        this.htmlLabelX[i-1].style.left = "240px";this.htmlLabelX[i-1].style.top = (30*i)+"px";
-        this.htmlLabelX[i-1].style.width = "20px";this.htmlLabelX[i-1].style.height = "20px";
-        this.htmlDiv.appendChild(this.htmlLabelX[i-1]);
+        this.htmlLabelX[i] = document.createElement('label');
+        this.htmlLabelX[i].style.position = "absolute";
+        this.htmlLabelX[i].innerHTML  = identifier[i]+":";
+        this.htmlLabelX[i].style.left = "240px";this.htmlLabelX[i].style.top = (30*(i+1))+"px";
+        this.htmlLabelX[i].style.width = "20px";this.htmlLabelX[i].style.height = "20px";
+        this.htmlDiv.appendChild(this.htmlLabelX[i]);
 
-        this.htmlLeverX[i-1] = document.createElement('canvas');
-        this.htmlLeverX[i-1].style.position = "absolute";
-        this.htmlLeverX[i-1].style.left = "270px";this.htmlLeverX[i-1].style.top = 30*i+"px";
-        this.htmlLeverX[i-1].width = 140;this.htmlLeverX[i-1].height = 20;
-        this.htmlDiv.appendChild(this.htmlLeverX[i-1]);
+        this.htmlLeverX[i] = document.createElement('canvas');
+        this.htmlLeverX[i].style.position = "absolute";
+        this.htmlLeverX[i].style.left = "270px";this.htmlLeverX[i].style.top = 30*(i+1)+"px";
+        this.htmlLeverX[i].width = 140;this.htmlLeverX[i].height = 20;
+        this.htmlDiv.appendChild(this.htmlLeverX[i]);
 
 
-        this.htmlTxtX[i-1] = document.createElement('input');
-        this.htmlTxtX[i-1].style.position = "absolute";
-        this.htmlTxtX[i-1].style.left = "420px";this.htmlTxtX[i-1].style.top = (30*i)+"px";
-        this.htmlTxtX[i-1].style.width = "40px";this.htmlTxtX[i-1].style.height = "20px";
-        this.htmlDiv.appendChild(this.htmlTxtX[i-1]);
+        this.htmlTxtX[i] = document.createElement('input');
+        this.htmlTxtX[i].style.position = "absolute";
+        this.htmlTxtX[i].style.left = "420px";this.htmlTxtX[i].style.top = (30*(i+1))+"px";
+        this.htmlTxtX[i].style.width = "40px";this.htmlTxtX[i].style.height = "20px";
+        this.htmlDiv.appendChild(this.htmlTxtX[i]);
+      }
+      for(let i=0;i<7;i++){
+        this.htmlPalette[i] = document.createElement('canvas');
+        this.htmlPalette[i].style.position = "absolute";
+        this.htmlPalette[i].style.left = (290+25*i)+"px";this.htmlPalette[i].style.top = "240px";
+        this.htmlPalette[i].width = 22;this.htmlPalette[i].height = 22;
+        this.htmlDiv.appendChild(this.htmlPalette[i]);
+      }
+      for(let i=7;i<14;i++){
+        this.htmlPalette[i] = document.createElement('canvas');
+        this.htmlPalette[i].style.position = "absolute";
+        this.htmlPalette[i].style.left = (290+25*(i-7))+"px";this.htmlPalette[i].style.top = "265px";
+        this.htmlPalette[i].width = 22;this.htmlPalette[i].height = 22;
+        this.htmlDiv.appendChild(this.htmlPalette[i]);
       }
     }
     setStyle(fontColor,inputColor,leverColor,backColor,frameColor,border,font){
@@ -114,14 +160,22 @@ class ColorPicker{
 
       this.applyStyle(this.htmlDiv,2)
       this.applyStyle(this.htmlFrame,3)
+      this.applyStyle(this.htmlOldColor,1)
+      this.applyStyle(this.htmlCurColor,1)
+      this.applyStyle(this.htmlOldColorLabel,0)
+      this.applyStyle(this.htmlCurColorLabel,0)
       this.applyStyle(this.htmlButOk,1)
       this.applyStyle(this.htmlButClose,1)
       this.applyStyle(this.htmlCanvas,1)
       this.applyStyle(this.htmlLeverY,1)
-      for(let i=1;i<=6;i++){
-        this.applyStyle(this.htmlLabelX[i-1],0)
-        this.applyStyle(this.htmlLeverX[i-1],1)
-        this.applyStyle(this.htmlTxtX[i-1],1)
+
+      for(let i=0;i<6;i++){
+        this.applyStyle(this.htmlLabelX[i],0)
+        this.applyStyle(this.htmlLeverX[i],1)
+        this.applyStyle(this.htmlTxtX[i],1)
+      }
+      for(let i=0;i<7*2;i++){
+        this.applyStyle(this.htmlPalette[i],1)
       }
     }
     applyStyle(obj,style){
@@ -535,6 +589,7 @@ class ColorPicker{
       return context;
     }
     render(){
+      this.htmlCurColor.style.background = this.returnColor("cssRGB")
       let context;let SmoothingEnabled = true;
       let resolution = 10;
       let fillStyle = this.leverColor; 
